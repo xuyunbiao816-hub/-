@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="花生800词上下册完整版805条本地学习与复习工具。">
+  <meta name="theme-color" content="#356b43">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="花生805词">
+  <title>花生805词 · 行测词语记忆器</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css?v=8">
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+
+  <header class="site-header">
+    <div>
+      <p class="eyebrow">花生上下册 · 805 条完整版</p>
+      <h1>行测词语记忆器</h1>
+    </div>
+    <p id="today-label" class="today-label"></p>
+  </header>
+
+  <nav class="main-nav" aria-label="功能区">
+    <button class="nav-button is-active" type="button" data-view="today" aria-current="page">今日学习</button>
+    <button class="nav-button" type="button" data-view="wrong">错词本</button>
+    <button class="nav-button" type="button" data-view="library">全部词库</button>
+  </nav>
+
+  <main id="main-content" tabindex="-1">
+    <section id="view-today" class="view is-active" aria-labelledby="today-title">
+      <h2 id="today-title" class="sr-only">今日学习</h2>
+
+      <div class="stats" aria-label="学习概况">
+        <div class="stat"><strong id="stat-today">0</strong><span>今日待学习</span></div>
+        <div class="stat"><strong id="stat-learned">0</strong><span>已学习</span></div>
+        <div class="stat"><strong id="stat-mastered">0</strong><span>已掌握</span></div>
+        <div class="stat"><strong id="stat-wrong">0</strong><span>错词数</span></div>
+      </div>
+
+      <details class="speech-settings">
+        <summary class="speech-settings-toggle">
+          <span id="speech-settings-title">朗读设置</span>
+        </summary>
+        <div class="speech-settings-content" aria-labelledby="speech-settings-title">
+          <p id="speech-support-note" class="muted">建议选择听起来最自然的普通话音色。</p>
+          <div class="speech-settings-grid">
+            <label class="speech-setting-row">
+              <span>启用朗读</span>
+              <input id="speech-enabled" type="checkbox">
+            </label>
+            <label class="speech-setting-row">
+              <span>卡片出现时自动朗读词语</span>
+              <input id="speech-auto-word" type="checkbox">
+            </label>
+            <label class="speech-setting-row">
+              <span>展开答案后自动朗读</span>
+              <input id="speech-auto-answer" type="checkbox">
+            </label>
+            <label class="speech-rate-setting">
+              <span>语速</span>
+              <select id="speech-rate">
+                <option value="0.75">0.75（较慢）</option>
+                <option value="0.9">0.9（默认）</option>
+                <option value="1.05">1.05（自然）</option>
+                <option value="1.2">1.2（较快）</option>
+              </select>
+            </label>
+            <label class="speech-rate-setting">
+              <span>中文音色</span>
+              <select id="speech-voice">
+                <option value="">自动选择</option>
+              </select>
+            </label>
+          </div>
+        </div>
+      </details>
+
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">复习与新学独立 · 随时切换</p>
+          <h2>今日学习</h2>
+        </div>
+        <p id="today-queue-note" class="muted"></p>
+      </div>
+
+      <div class="learning-modes" aria-label="选择学习内容">
+        <section id="review-module" class="mode-panel" aria-labelledby="review-module-title">
+          <div class="mode-topline">
+            <div>
+              <p class="eyebrow">按复习日期进入</p>
+              <h3 id="review-module-title">到期复习</h3>
+            </div>
+            <strong id="review-pending" class="mode-count">0</strong>
+          </div>
+          <p id="review-module-status" class="muted"></p>
+          <button id="start-review-study" class="button button-primary" type="button">开始复习</button>
+        </section>
+
+        <section id="new-module" class="mode-panel" aria-labelledby="new-module-title">
+          <div class="mode-topline">
+            <div>
+              <p class="eyebrow">每批最多 20 条</p>
+              <h3 id="new-module-title">新词学习</h3>
+            </div>
+            <strong id="new-pending" class="mode-count">0</strong>
+          </div>
+          <p id="new-module-status" class="muted"></p>
+          <button id="start-new-study" class="button button-primary" type="button">开始新词</button>
+        </section>
+      </div>
+
+      <p id="active-study-label" class="active-study-label" hidden></p>
+      <div id="today-study-host" aria-live="polite"></div>
+    </section>
+
+    <section id="view-wrong" class="view" aria-labelledby="wrong-title" hidden>
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">按题库原始顺序</p>
+          <h2 id="wrong-title">错词本</h2>
+        </div>
+        <button id="start-wrong-review" class="button button-primary" type="button">开始错词复习</button>
+      </div>
+      <div id="wrong-review-host" class="wrong-review-host" aria-live="polite"></div>
+      <div id="wrong-list" class="word-list"></div>
+    </section>
+
+    <section id="view-library" class="view" aria-labelledby="library-title" hidden>
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">上下册完整题库</p>
+          <h2 id="library-title">全部词库</h2>
+        </div>
+        <p id="library-count" class="muted"></p>
+      </div>
+
+      <div class="filters filters-three" role="search">
+        <label>
+          <span>搜索词语</span>
+          <input id="word-search" type="search" placeholder="输入成语或实词" autocomplete="off">
+        </label>
+        <label>
+          <span>类型</span>
+          <select id="type-filter">
+            <option value="">全部类型</option>
+            <option value="成语">成语</option>
+            <option value="实词">实词</option>
+          </select>
+        </label>
+        <label>
+          <span>组别</span>
+          <select id="group-filter">
+            <option value="">全部组别</option>
+          </select>
+        </label>
+      </div>
+      <div id="library-list" class="word-list"></div>
+
+      <section class="data-tools" aria-labelledby="data-title">
+        <div>
+          <h3 id="data-title">学习进度管理</h3>
+          <p class="muted">进度只以记录ID为键，不包含原始题库内容。</p>
+        </div>
+        <div class="tool-actions">
+          <button id="export-progress" class="button" type="button">导出学习进度 JSON</button>
+          <label class="button file-button" for="import-progress">导入学习进度 JSON</label>
+          <input id="import-progress" class="sr-only" type="file" accept="application/json,.json">
+          <button id="reset-progress" class="button button-danger" type="button">重置全部进度</button>
+        </div>
+      </section>
+    </section>
+
+  </main>
+
+  <dialog id="detail-dialog" aria-labelledby="detail-title">
+    <div class="dialog-header">
+      <div>
+        <p id="detail-meta" class="eyebrow"></p>
+        <h2 id="detail-title"></h2>
+      </div>
+      <button id="close-dialog" class="icon-button" type="button" aria-label="关闭详情">关闭</button>
+    </div>
+    <div id="detail-content"></div>
+    <div class="dialog-footer">
+      <button id="detail-wrong-toggle" class="button" type="button">加入错词本</button>
+    </div>
+  </dialog>
+
+  <template id="study-card-template">
+    <article class="study-card">
+      <div class="card-topline">
+        <div>
+          <div class="study-badges"></div>
+          <p class="study-group"></p>
+          <p class="study-category"></p>
+        </div>
+        <div class="card-progress-wrap">
+          <span class="study-progress"></span>
+          <span class="study-record-id"></span>
+        </div>
+      </div>
+      <h3 class="study-idiom"></h3>
+      <p class="front-prompt">先在心里回忆含义和用法，再查看答案。</p>
+      <button class="reveal-button button button-primary" type="button">查看释义</button>
+      <div class="study-answer" hidden>
+        <div class="detail-block">
+          <h4>原书释义</h4>
+          <p class="study-definition"></p>
+        </div>
+        <div class="detail-block study-tip-block" hidden>
+          <h4>使用提示</h4>
+          <p class="study-tip"></p>
+        </div>
+        <div class="detail-block study-examples-block">
+          <h4>例句</h4>
+          <ol class="study-examples"></ol>
+        </div>
+        <p class="study-page muted"></p>
+        <div class="speech-actions">
+          <button class="speech-read-button button" type="button">朗读</button>
+        </div>
+        <p class="speech-unavailable muted" hidden>当前浏览器不支持原生朗读。</p>
+        <button class="study-wrong-toggle button button-quiet" type="button"></button>
+        <fieldset class="rating-fieldset">
+          <legend>这次记得怎么样？</legend>
+          <div class="rating-buttons">
+            <button type="button" data-rating="again" class="rating rating-again"><strong>不会</strong><span>次日</span></button>
+            <button type="button" data-rating="fuzzy" class="rating rating-fuzzy"><strong>模糊</strong><span>稍后复习</span></button>
+            <button type="button" data-rating="good" class="rating rating-good"><strong>会了</strong><span>拉长间隔</span></button>
+            <button type="button" data-rating="easy" class="rating rating-easy"><strong>熟练</strong><span>最长间隔</span></button>
+          </div>
+        </fieldset>
+      </div>
+    </article>
+  </template>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script src="app.js" defer></script>
+</body>
+</html>

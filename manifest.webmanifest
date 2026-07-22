@@ -1,0 +1,27 @@
+{
+  "id": "./",
+  "name": "花生805词 · 行测词语记忆器",
+  "short_name": "花生805词",
+  "description": "花生800词上下册完整版805条本地学习与间隔复习工具",
+  "lang": "zh-CN",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#faf8f2",
+  "theme_color": "#356b43",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
