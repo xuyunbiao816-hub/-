@@ -1,11 +1,11 @@
 "use strict";
 
-const CACHE_NAME = "huasheng-805-pwa-20260722-v8";
+const CACHE_NAME = "sihai-1000-pwa-20260803-v1";
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css?v=8",
-  "./app.js",
+  "./styles.css?v=1",
+  "./app.js?v=1",
   "./manifest.webmanifest",
   "./data/words.json",
   "./icons/icon-192.png",

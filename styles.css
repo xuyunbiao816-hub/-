@@ -155,7 +155,7 @@ main { max-width: 1040px; margin: 0 auto; padding: 18px; }
   font-weight: 700;
 }
 .button:hover { border-color: var(--green); color: var(--green-dark); }
-.button:focus-visible, .nav-button:focus-visible, .rating:focus-visible, input:focus-visible, select:focus-visible, .icon-button:focus-visible {
+.button:focus-visible, .nav-button:focus-visible, .rating:focus-visible, input:focus-visible, select:focus-visible, .icon-button:focus-visible, .example-speech-button:focus-visible {
   outline: 3px solid rgba(53, 107, 67, .28);
   outline-offset: 2px;
 }
@@ -170,6 +170,24 @@ main { max-width: 1040px; margin: 0 auto; padding: 18px; }
 .detail-block p { margin-bottom: 0; }
 .study-examples { margin: 0; padding-left: 1.35rem; }
 .study-examples li + li { margin-top: 10px; }
+.study-examples li { padding-right: 1px; }
+.example-speech-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  margin-left: 8px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  vertical-align: middle;
+  font-size: .9rem;
+}
+.example-speech-button:hover { border-color: var(--green); background: var(--green-soft); }
+.example-speech-button:disabled { cursor: not-allowed; opacity: .5; }
 .study-page { margin-bottom: 14px; font-size: .82rem; }
 .speech-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
 .speech-actions .button { min-width: 88px; }

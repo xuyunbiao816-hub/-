@@ -1,10 +1,10 @@
 "use strict";
 
 const DATA_URL = "data/words.json";
-const EXPECTED_COUNT = 805;
-const PROGRESS_KEY = "huasheng-805-progress-v1";
-const DAILY_KEY = "huasheng-805-daily-v1";
-const SPEECH_SETTINGS_KEY = "huasheng-805-speech-v1";
+const EXPECTED_COUNT = 993;
+const PROGRESS_KEY = "sihai-1000-progress-v1";
+const DAILY_KEY = "sihai-1000-daily-v1";
+const SPEECH_SETTINGS_KEY = "sihai-1000-speech-v1";
 const SPEECH_RATES = [0.75, 0.9, 1.05, 1.2];
 const DEFAULT_SPEECH_SETTINGS = {
   enabled: true,
@@ -233,16 +233,12 @@ function speakWord(item) {
 }
 
 function speakAnswer(item) {
-  const parts = [item["词语"], item["原书释义"]]
-    .map(value => String(value || "").trim())
-    .filter(Boolean);
-  const firstExample = String(item["例句1"] || "").trim();
-  if (firstExample) parts.push(firstExample);
-  speakText(parts.map(part => /[。！？；!?]$/.test(part) ? part : `${part}。`).join(""));
+  const definition = String(item["原书释义"] || "").trim();
+  speakText(definition ? (/[。！？；!?]$/.test(definition) ? definition : `${definition}。`) : "");
 }
 
 function syncCardSpeechUi(scope = document) {
-  $$(".speech-read-button", scope).forEach(button => {
+  $$(".speech-read-button, .example-speech-button", scope).forEach(button => {
     button.hidden = !speechSupported;
     button.disabled = !speechSettings.enabled;
   });
@@ -498,7 +494,7 @@ function renderToday() {
   else newButton.textContent = "全部词语已学完";
   $("#new-module-status").textContent = newCount > 0
     ? `第 ${batchNumber} 批剩余 ${newCount} 条。`
-    : moreNew ? `第 ${batchNumber} 批已完成，可自主开启下一批。` : "805 条已全部学习。";
+    : moreNew ? `第 ${batchNumber} 批已完成，可自主开启下一批。` : `${EXPECTED_COUNT} 条已全部学习。`;
 
   const activeLabel = $("#active-study-label");
   if (!activeStudyMode) {
@@ -514,7 +510,7 @@ function renderToday() {
   if (!session || session.queue.length === 0) {
     host.innerHTML = activeStudyMode === "review"
       ? `<div class="empty-state"><h3>到期复习完成</h3><p>可以切换到新词学习。</p></div>`
-      : `<div class="empty-state"><h3>本批新词完成</h3><p>${moreNew ? "可点击上方“再学 20 条新词”继续。" : "805 条已全部学习。"}</p></div>`;
+      : `<div class="empty-state"><h3>本批新词完成</h3><p>${moreNew ? "可点击上方“再学 20 条新词”继续。" : `${EXPECTED_COUNT} 条已全部学习。`}</p></div>`;
     return;
   }
   const id = session.queue[0];
@@ -549,9 +545,18 @@ function renderStudyCard(host, item, progressText, onRate) {
   }
   const examples = [item.例句1, item.例句2, item.例句3].filter(value => String(value || "").trim()).slice(0, 3);
   const exampleList = $(".study-examples", card);
-  examples.forEach(example => {
+  examples.forEach((example, index) => {
     const li = document.createElement("li");
-    li.textContent = example;
+    const text = document.createElement("span");
+    text.textContent = example;
+    const readExample = document.createElement("button");
+    readExample.type = "button";
+    readExample.className = "example-speech-button";
+    readExample.textContent = "🔊";
+    readExample.setAttribute("aria-label", `朗读第${index + 1}条例句`);
+    readExample.title = `朗读第${index + 1}条例句`;
+    readExample.addEventListener("click", () => speakText(example));
+    li.append(text, readExample);
     exampleList.append(li);
   });
   if (examples.length === 0) $(".study-examples-block", card).hidden = true;
@@ -799,15 +804,25 @@ function openDetail(item) {
     heading.textContent = "例句";
     const list = document.createElement("ol");
     list.className = "study-examples";
-    examples.forEach(example => {
+    examples.forEach((example, index) => {
       const li = document.createElement("li");
-      li.textContent = example;
+      const text = document.createElement("span");
+      text.textContent = example;
+      const readExample = document.createElement("button");
+      readExample.type = "button";
+      readExample.className = "example-speech-button";
+      readExample.textContent = "🔊";
+      readExample.setAttribute("aria-label", `朗读第${index + 1}条例句`);
+      readExample.title = `朗读第${index + 1}条例句`;
+      readExample.addEventListener("click", () => speakText(example));
+      li.append(text, readExample);
       list.append(li);
     });
     block.append(heading, list);
     content.append(block);
   }
   content.append(detailBlock("来源页码", `${item.册别}资料第 ${item.资料页码} 页（PDF 第 ${item.PDF页序} 页）`));
+  syncCardSpeechUi(content);
   updateDetailWrongButton();
   $("#detail-dialog").showModal();
 }
@@ -833,7 +848,7 @@ function exportProgress() {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");
   anchor.href = url;
-  anchor.download = `花生805词学习进度_${localDate()}.json`;
+  anchor.download = `四海1000词学习进度_${localDate()}.json`;
   document.body.append(anchor);
   anchor.click();
   anchor.remove();
