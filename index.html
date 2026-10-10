@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="四海新版高频成语实词1000词本地学习与复习工具，PDF实际收录993条。">
-  <meta name="theme-color" content="#356b43">
+  <meta name="theme-color" content="#eaf7f5">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -13,15 +13,23 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="styles.css?v=1">
+  <link rel="stylesheet" href="styles.css?v=6">
 </head>
 <body>
   <a class="skip-link" href="#main-content">跳到主要内容</a>
 
   <header class="site-header">
-    <div>
+    <div class="site-title-block">
       <p class="eyebrow">四海新版1000词 · PDF实际993条</p>
       <h1>行测词语记忆器</h1>
+      <p class="site-credit">by 海🌊</p>
+    </div>
+    <div class="header-waves" aria-hidden="true">
+      <span class="header-wave header-wave-small">🌊</span>
+      <span class="header-wave header-wave-medium">🌊</span>
+      <span class="header-wave header-wave-large">🌊</span>
+      <span class="header-wave header-wave-front">🌊</span>
+      <span class="header-wave header-wave-crest">🌊</span>
     </div>
     <p id="today-label" class="today-label"></p>
   </header>
@@ -178,6 +186,8 @@
 
   </main>
 
+  <footer class="site-footer">Made by 海🌊 · 仅供学习交流</footer>
+
   <dialog id="detail-dialog" aria-labelledby="detail-title">
     <div class="dialog-header">
       <div>
@@ -207,33 +217,64 @@
       </div>
       <h3 class="study-idiom"></h3>
       <p class="front-prompt">先在心里回忆含义和用法，再查看答案。</p>
+      <section class="review-question" aria-label="复习判断题" hidden>
+        <p class="review-question-kind">语境判断</p>
+        <h4 class="review-question-title"></h4>
+        <p class="review-context"></p>
+        <div class="review-options" role="group" aria-label="请选择答案"></div>
+        <p class="review-result" aria-live="polite" hidden></p>
+      </section>
       <button class="reveal-button button button-primary" type="button">查看释义</button>
       <div class="study-answer" hidden>
-        <div class="detail-block">
-          <h4>原书释义</h4>
-          <p class="study-definition"></p>
+        <div class="study-full-answer">
+          <div class="detail-block plain-meaning-block study-plain-block" hidden>
+            <h4>说人话</h4>
+            <p class="study-plain-definition"></p>
+          </div>
+          <details class="original-definition study-original-definition">
+            <summary>四海原书释义</summary>
+            <p class="study-definition"></p>
+          </details>
+          <div class="detail-block study-tip-block" hidden>
+            <h4>使用提示</h4>
+            <p class="study-tip"></p>
+          </div>
+          <div class="detail-block study-examples-block">
+            <h4>例句</h4>
+            <ol class="study-examples"></ol>
+          </div>
+          <p class="study-page muted"></p>
+          <div class="speech-actions">
+            <button class="speech-read-button button" type="button">朗读释义</button>
+          </div>
+          <p class="speech-unavailable muted" hidden>当前浏览器不支持原生朗读。</p>
         </div>
-        <div class="detail-block study-tip-block" hidden>
-          <h4>使用提示</h4>
-          <p class="study-tip"></p>
+        <div class="review-answer-summary" hidden>
+          <div class="detail-block review-core-block">
+            <h4 class="review-core-title">简短核心意思</h4>
+            <p class="review-core-meaning"></p>
+          </div>
+          <details class="original-definition review-original-definition">
+            <summary>四海原书释义</summary>
+            <p class="review-original-text"></p>
+          </details>
+          <div class="detail-block">
+            <h4>重点强调</h4>
+            <p class="review-emphasis"></p>
+          </div>
+          <div class="detail-block review-contrast-block" hidden>
+            <h4>近义词区别</h4>
+            <p class="review-contrast"></p>
+          </div>
         </div>
-        <div class="detail-block study-examples-block">
-          <h4>例句</h4>
-          <ol class="study-examples"></ol>
-        </div>
-        <p class="study-page muted"></p>
-        <div class="speech-actions">
-          <button class="speech-read-button button" type="button">朗读释义</button>
-        </div>
-        <p class="speech-unavailable muted" hidden>当前浏览器不支持原生朗读。</p>
         <button class="study-wrong-toggle button button-quiet" type="button"></button>
         <fieldset class="rating-fieldset">
-          <legend>这次记得怎么样？</legend>
+          <legend>这次判断得怎么样？</legend>
           <div class="rating-buttons">
-            <button type="button" data-rating="again" class="rating rating-again"><strong>不会</strong><span>次日</span></button>
-            <button type="button" data-rating="fuzzy" class="rating rating-fuzzy"><strong>模糊</strong><span>稍后复习</span></button>
-            <button type="button" data-rating="good" class="rating rating-good"><strong>会了</strong><span>拉长间隔</span></button>
-            <button type="button" data-rating="easy" class="rating rating-easy"><strong>熟练</strong><span>最长间隔</span></button>
+            <button type="button" data-rating="again" class="rating rating-again"><strong>误判</strong><span>次日</span></button>
+            <button type="button" data-rating="fuzzy" class="rating rating-fuzzy"><strong>犹豫</strong><span>稍后复习</span></button>
+            <button type="button" data-rating="good" class="rating rating-good"><strong>能判断</strong><span>拉长间隔</span></button>
+            <button type="button" data-rating="easy" class="rating rating-easy"><strong>秒判</strong><span>最长间隔</span></button>
           </div>
         </fieldset>
       </div>
@@ -241,6 +282,7 @@
   </template>
 
   <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-  <script src="app.js?v=1" defer></script>
+  <script src="app.js?v=3" defer></script>
 </body>
 </html>
+
