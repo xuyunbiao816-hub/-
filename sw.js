@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "sihai-1000-pwa-20261010-release-v10";
+const CACHE_NAME = "sihai-1000-pwa-20261010-release-v11";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -8,9 +8,10 @@ const APP_SHELL = [
   "./app.js?v=4",
   "./manifest.webmanifest",
   "./data/words.json?v=2",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
-  "./icons/apple-touch-icon.png"
+  "./icons/favicon-32.png?v=2",
+  "./icons/icon-192.png?v=2",
+  "./icons/icon-512.png?v=2",
+  "./icons/apple-touch-icon.png?v=2"
 ];
 
 self.addEventListener("install", event => {
@@ -55,4 +56,3 @@ self.addEventListener("fetch", event => {
     })
   );
 });
-
