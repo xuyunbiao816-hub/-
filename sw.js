@@ -1,13 +1,13 @@
 "use strict";
 
-const CACHE_NAME = "sihai-1000-pwa-20261010-release-v9";
+const CACHE_NAME = "sihai-1000-pwa-20261010-release-v10";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./styles.css?v=6",
-  "./app.js?v=3",
+  "./app.js?v=4",
   "./manifest.webmanifest",
-  "./data/words.json",
+  "./data/words.json?v=2",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/apple-touch-icon.png"
