@@ -1,6 +1,6 @@
 "use strict";
 
-const DATA_URL = "data/words.json";
+const DATA_URL = "data/words.json?v=2";
 const EXPECTED_COUNT = 993;
 const PROGRESS_KEY = "sihai-1000-progress-v1";
 const DAILY_KEY = "sihai-1000-daily-v1";
