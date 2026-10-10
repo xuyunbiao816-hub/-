@@ -233,7 +233,7 @@ function speakWord(item) {
 }
 
 function speakAnswer(item) {
-  const definition = String(item["原书释义"] || "").trim();
+  const definition = String(item["说人话"] || item["原书释义"] || "").trim();
   speakText(definition ? (/[。！？；!?]$/.test(definition) ? definition : `${definition}。`) : "");
 }
 
@@ -526,6 +526,82 @@ function makeTypeBadge(type) {
   return span;
 }
 
+function shortCoreMeaning(item) {
+  const plain = String(item.说人话 || "").trim();
+  if (plain) return plain;
+  const definition = String(item.原书释义 || "").trim();
+  const firstSentence = definition.match(/^.*?[。！？；]/);
+  return firstSentence ? firstSentence[0] : definition;
+}
+
+function similarWordsFor(item) {
+  if (Array.isArray(item.similarWords)) {
+    return item.similarWords.map(value => String(value || "").trim()).filter(Boolean);
+  }
+  const single = String(item.similarWords || "").trim();
+  return single ? [single] : [];
+}
+
+function reviewQuestionFor(item) {
+  const examples = [item.例句1, item.例句2, item.例句3]
+    .map(value => String(value || "").trim())
+    .filter(Boolean);
+  const context = examples[0] || `“${item.词语}”`;
+  const similarWord = similarWordsFor(item).find(word => word !== item.词语);
+  if (similarWord && context.includes(item.词语)) {
+    const options = [item.词语, similarWord];
+    if (Number(item.序号) % 2 === 0) options.reverse();
+    return {
+      kind: "近义词辨析",
+      title: "这个语境中，哪个词更合适？",
+      context: context.replace(item.词语, "____"),
+      options,
+      correct: item.词语
+    };
+  }
+  return {
+    kind: "语境判断",
+    title: `下面句子中使用“${item.词语}”是否合适？`,
+    context,
+    options: ["适合", "不适合"],
+    correct: "适合"
+  };
+}
+
+function renderReviewQuestion(card, item, answer) {
+  const question = reviewQuestionFor(item);
+  const questionBlock = $(".review-question", card);
+  questionBlock.hidden = false;
+  $(".review-question-kind", card).textContent = question.kind;
+  $(".review-question-title", card).textContent = question.title;
+  $(".review-context", card).textContent = question.context;
+
+  const optionsHost = $(".review-options", card);
+  question.options.forEach(option => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "review-option button";
+    button.textContent = option;
+    button.addEventListener("click", () => {
+      const correct = option === question.correct;
+      $$(".review-option", optionsHost).forEach(candidate => {
+        candidate.disabled = true;
+        if (candidate.textContent === question.correct) candidate.classList.add("is-correct");
+      });
+      if (!correct) button.classList.add("is-wrong");
+      const result = $(".review-result", card);
+      result.hidden = false;
+      result.classList.toggle("is-correct", correct);
+      result.classList.toggle("is-wrong", !correct);
+      result.textContent = correct ? "判断正确" : `正确答案：${question.correct}`;
+      answer.hidden = false;
+      if (speechSettings.enabled && speechSettings.autoAnswer) speakText(shortCoreMeaning(item));
+      $("[data-rating]", answer).focus();
+    });
+    optionsHost.append(button);
+  });
+}
+
 function renderStudyCard(host, item, progressText, onRate) {
   stopSpeech();
   host.replaceChildren();
@@ -537,6 +613,12 @@ function renderStudyCard(host, item, progressText, onRate) {
   $(".study-progress", card).textContent = `当前进度 ${progressText}`;
   $(".study-record-id", card).textContent = item.记录ID;
   $(".study-idiom", card).textContent = item.词语;
+  const plain = String(item.说人话 || "").trim();
+  if (plain) {
+    $(".study-plain-block", card).hidden = false;
+    $(".study-plain-definition", card).textContent = plain;
+  }
+  $(".study-original-definition", card).open = !plain;
   $(".study-definition", card).textContent = item.原书释义;
   const tipBlock = $(".study-tip-block", card);
   if (String(item.使用提示 || "").trim()) {
@@ -575,12 +657,34 @@ function renderStudyCard(host, item, progressText, onRate) {
   const readButton = $(".speech-read-button", card);
   readButton.addEventListener("click", () => speakAnswer(item));
   syncCardSpeechUi(card);
-  reveal.addEventListener("click", () => {
-    answer.hidden = false;
+  const isIdiomReview = item.类型 === "成语" && recordFor(id).studied;
+  if (isIdiomReview) {
+    $(".front-prompt", card).hidden = true;
     reveal.hidden = true;
-    if (speechSettings.enabled && speechSettings.autoAnswer) speakAnswer(item);
-    $("[data-rating]", answer).focus();
-  });
+    $(".study-full-answer", card).hidden = true;
+    const summary = $(".review-answer-summary", card);
+    summary.hidden = false;
+    if (plain) {
+      $(".review-core-block", summary).classList.add("plain-meaning-block");
+      $(".review-core-title", summary).textContent = "说人话";
+    }
+    $(".review-core-meaning", summary).textContent = shortCoreMeaning(item);
+    $(".review-original-text", summary).textContent = item.原书释义;
+    $(".review-emphasis", summary).textContent = String(item.使用提示 || item.小分类 || "").trim();
+    const contrast = String(item.contrast || "").trim();
+    if (contrast) {
+      $(".review-contrast-block", summary).hidden = false;
+      $(".review-contrast", summary).textContent = contrast;
+    }
+    renderReviewQuestion(card, item, answer);
+  } else {
+    reveal.addEventListener("click", () => {
+      answer.hidden = false;
+      reveal.hidden = true;
+      if (speechSettings.enabled && speechSettings.autoAnswer) speakAnswer(item);
+      $("[data-rating]", answer).focus();
+    });
+  }
   $$('[data-rating]', card).forEach(button => button.addEventListener("click", () => onRate(button.dataset.rating)));
   host.append(fragment);
   if (speechSettings.enabled && speechSettings.autoWord) speakWord(item);
@@ -652,7 +756,7 @@ function renderWrongList() {
   $("#start-wrong-review").disabled = items.length === 0;
   list.replaceChildren();
   if (items.length === 0) {
-    list.innerHTML = `<div class="empty-state"><h3>暂无错词</h3><p>评价为“不会”时会自动加入，也可以从全部词库手动添加。</p></div>`;
+    list.innerHTML = `<div class="empty-state"><h3>暂无错词</h3><p>评价为“误判”时会自动加入，也可以从全部词库手动添加。</p></div>`;
     return;
   }
   items.forEach(item => list.append(createWordRow(item, "wrong")));
@@ -792,9 +896,11 @@ function openDetail(item) {
   $("#detail-title").textContent = item.词语;
   const content = $("#detail-content");
   content.replaceChildren();
+  const plain = String(item.说人话 || "").trim();
+  if (plain) content.append(detailBlock("说人话", plain, "plain-meaning-block"));
+  content.append(originalDefinitionBlock(item.原书释义, !plain));
   content.append(detailBlock("记录ID", item.记录ID));
   content.append(detailBlock("小分类", item.小分类));
-  content.append(detailBlock("原书释义", item.原书释义));
   if (String(item.使用提示 || "").trim()) content.append(detailBlock("使用提示", item.使用提示));
   const examples = [item.例句1, item.例句2, item.例句3].filter(value => String(value || "").trim()).slice(0, 3);
   if (examples.length) {
@@ -827,9 +933,21 @@ function openDetail(item) {
   $("#detail-dialog").showModal();
 }
 
-function detailBlock(title, text) {
+function originalDefinitionBlock(text, expanded) {
+  const block = document.createElement("details");
+  block.className = "original-definition";
+  block.open = expanded;
+  const summary = document.createElement("summary");
+  summary.textContent = "四海原书释义";
+  const paragraph = document.createElement("p");
+  paragraph.textContent = text;
+  block.append(summary, paragraph);
+  return block;
+}
+
+function detailBlock(title, text, className = "") {
   const block = document.createElement("div");
-  block.className = "detail-block";
+  block.className = `detail-block ${className}`.trim();
   const heading = document.createElement("h3");
   heading.textContent = title;
   const paragraph = document.createElement("p");
@@ -909,3 +1027,4 @@ function showToast(message) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { toast.hidden = true; }, 2200);
 }
+
