@@ -1,6 +1,6 @@
 "use strict";
 
-const CACHE_NAME = "sihai-1000-pwa-20261010-release-v8";
+const CACHE_NAME = "sihai-1000-pwa-20261010-release-v9";
 const APP_SHELL = [
   "./",
   "./index.html",
