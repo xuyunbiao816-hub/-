@@ -1,11 +1,11 @@
 "use strict";
 
-const CACHE_NAME = "sihai-1000-pwa-20260803-v1";
+const CACHE_NAME = "sihai-1000-pwa-20261010-release-v8";
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./styles.css?v=1",
-  "./app.js?v=1",
+  "./styles.css?v=6",
+  "./app.js?v=3",
   "./manifest.webmanifest",
   "./data/words.json",
   "./icons/icon-192.png",
@@ -55,3 +55,4 @@ self.addEventListener("fetch", event => {
     })
   );
 });
+
